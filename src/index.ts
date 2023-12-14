@@ -36,6 +36,22 @@ export = (app: Probot) => {
 
         return context.octokit.issues.createComment(params);
     });
+
+    app.on("pull_request.reopened", async (context) => {
+        return context.octokit.pulls.createReview({
+            owner: context.payload.repository.owner.login,
+            repo: context.payload.repository.name,
+            pull_number: context.payload.pull_request.number,
+            body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+            event: "APPROVE",
+        });
+        context.octokit.pulls.createReviewComment({
+            owner: context.payload.repository.owner.login,
+            repo: context.payload.repository.name,
+            pull_number: context.payload.pull_request.number,
+            body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+        });
+    });
 };
 
 // function checkForPK(files) {
