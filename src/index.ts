@@ -1,6 +1,8 @@
 import { Probot } from "probot";
 
 export = (app: Probot) => {
+    app.log.info("Yay, the app was loaded!");
+
     app.on("pull_request.opened", async (context) => {
         try {
             console.log("Pull request opened event triggered");
@@ -39,7 +41,7 @@ export = (app: Probot) => {
                 event: "COMMENT",
             });
         } catch (error) {
-            console.error("Error in pull_request.opened event:", error.message);
+            console.error("Error in pull_request.opened event:", error);
         }
     });
 
@@ -51,7 +53,7 @@ export = (app: Probot) => {
 
             await context.octokit.issues.createComment(params);
         } catch (error) {
-            console.error("Error in issues.opened event:", error.message);
+            console.error("Error in issues.opened event:", error);
         }
     });
 
@@ -65,11 +67,8 @@ export = (app: Probot) => {
                 pull_number: context.payload.pull_request.number,
                 body: "This pull request has been reopened. Check for private keys is not going to be performed again.",
             });
-        } catch (error: any) {
-            console.error(
-                "Error in pull_request.reopened event:",
-                error.message,
-            );
+        } catch (error) {
+            console.error("Error in pull_request.reopened event:", error);
         }
     });
 };
