@@ -32,32 +32,27 @@ export = (app: Probot) => {
     });
 
     app.on("issues.opened", async (context) => {
-        // `context` extracts information from the event, which can be passed to
-        // GitHub API calls. This will return:
-        //   { owner: 'yourname', repo: 'yourrepo', number: 123, body: 'Hello World !}
         const params = context.issue({ body: "Hello World!" });
 
-        // Post a comment on the issue
         return context.octokit.issues.createComment(params);
     });
 };
 
-function checkForPK(files) {
-    const keyPattern1: RegExp =
-        /-----BEGIN (RSA|OPENSSH|DSA|EC|PGP) PRIVATE KEY-----/;
-    const keyPattern2: RegExp = /0x/;
+// function checkForPK(files) {
+//     const keyPattern1: RegExp =
+//         /-----BEGIN (RSA|OPENSSH|DSA|EC|PGP) PRIVATE KEY-----/;
+//     const keyPattern2: RegExp = /0x/;
 
-    return files.some((file) => {
-        return (
-            keyPattern1.test(file.contents) ||
-            file.filename.includes(".pem") ||
-            file.filename.includes(".key") ||
-            file.filename.includes(".pk") ||
-            file.filename.includes(".p12") ||
-            file.filename.includes(".pfx") ||
-            file.filename.includes(".asc") ||
-            keyPattern2.test(file.contents)
-        );
-    });
-    // files.some((file) => keyPattern1.test(file.contents));
-}
+//     return files.some((file) => {
+//         return (
+//             keyPattern1.test(file.contents) ||
+//             file.filename.includes(".pem") ||
+//             file.filename.includes(".key") ||
+//             file.filename.includes(".pk") ||
+//             file.filename.includes(".p12") ||
+//             file.filename.includes(".pfx") ||
+//             file.filename.includes(".asc") ||
+//             keyPattern2.test(file.contents)
+//         );
+//     });
+// }
