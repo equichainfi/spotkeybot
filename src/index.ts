@@ -1,26 +1,35 @@
 import { Probot } from "probot";
 
 export = (app: Probot) => {
-    app.on("pull_request.opened", async (context): Promise<void> => {
-        const files = await context.octokit.pulls.listFiles({
+    app.on("pull_request.opened", async (context) => {
+        // const files = await context.octokit.pulls.listFiles({
+        //     owner: context.payload.repository.owner.login,
+        //     repo: context.payload.repository.name,
+        //     pull_number: context.payload.pull_request.number,
+        // });
+
+        // // if (checkForPK(files.data)) {
+        // //     await context.octokit.issues.createComment({
+        // //         owner: context.payload.repository.owner.login,
+        // //         repo: context.payload.repository.name,
+        // //         issue_number: context.payload.pull_request.number,
+        // //         body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+        // //     });
+        // // }
+        // await context.octokit.issues.createComment({
+        //     owner: context.payload.repository.owner.login,
+        //     repo: context.payload.repository.name,
+        //     issue_number: context.payload.pull_request.number,
+        //     body: files.data[0].filename,
+        // });
+        const params = context.issue({ body: "Hello World!" });
+
+        return context.octokit.pulls.createReview({
             owner: context.payload.repository.owner.login,
             repo: context.payload.repository.name,
             pull_number: context.payload.pull_request.number,
-        });
-
-        // if (checkForPK(files.data)) {
-        //     await context.octokit.issues.createComment({
-        //         owner: context.payload.repository.owner.login,
-        //         repo: context.payload.repository.name,
-        //         issue_number: context.payload.pull_request.number,
-        //         body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
-        //     });
-        // }
-        await context.octokit.issues.createComment({
-            owner: context.payload.repository.owner.login,
-            repo: context.payload.repository.name,
-            issue_number: context.payload.pull_request.number,
-            body: files.data[0].filename,
+            body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+            event: "COMMENT",
         });
     });
 };
