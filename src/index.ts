@@ -42,7 +42,7 @@ export = (app: Probot) => {
             owner: context.payload.repository.owner.login,
             repo: context.payload.repository.name,
             pull_number: context.payload.pull_request.number,
-            body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+            body: "This pull request has been reopened. Check for private keys is not going to be performed again.",
         });
     });
 };
