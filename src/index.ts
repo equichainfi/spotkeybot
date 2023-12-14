@@ -22,8 +22,6 @@ export = (app: Probot) => {
         //     issue_number: context.payload.pull_request.number,
         //     body: files.data[0].filename,
         // });
-        const params = context.issue({ body: "Hello World!" });
-
         return context.octokit.pulls.createReview({
             owner: context.payload.repository.owner.login,
             repo: context.payload.repository.name,
@@ -31,6 +29,16 @@ export = (app: Probot) => {
             body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
             event: "COMMENT",
         });
+    });
+
+    app.on("issues.opened", async (context) => {
+        // `context` extracts information from the event, which can be passed to
+        // GitHub API calls. This will return:
+        //   { owner: 'yourname', repo: 'yourrepo', number: 123, body: 'Hello World !}
+        const params = context.issue({ body: "Hello World!" });
+
+        // Post a comment on the issue
+        return context.octokit.issues.createComment(params);
     });
 };
 
