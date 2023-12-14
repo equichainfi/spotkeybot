@@ -2,51 +2,79 @@ import { Probot } from "probot";
 
 export = (app: Probot) => {
     app.on("pull_request.opened", async (context) => {
-        // const files = await context.octokit.pulls.listFiles({
-        //     owner: context.payload.repository.owner.login,
-        //     repo: context.payload.repository.name,
-        //     pull_number: context.payload.pull_request.number,
-        // });
+        try {
+            console.log("Pull request opened event triggered");
 
-        // // if (checkForPK(files.data)) {
-        // //     await context.octokit.issues.createComment({
-        // //         owner: context.payload.repository.owner.login,
-        // //         repo: context.payload.repository.name,
-        // //         issue_number: context.payload.pull_request.number,
-        // //         body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
-        // //     });
-        // // }
-        // await context.octokit.issues.createComment({
-        //     owner: context.payload.repository.owner.login,
-        //     repo: context.payload.repository.name,
-        //     issue_number: context.payload.pull_request.number,
-        //     body: files.data[0].filename,
-        // });
-        return context.octokit.pulls.createReview({
-            owner: context.payload.repository.owner.login,
-            repo: context.payload.repository.name,
-            pull_number: context.payload.pull_request.number,
-            body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
-            event: "COMMENT",
-        });
+            // Uncomment the following lines if you want to list files and check for private keys
+            // const files = await context.octokit.pulls.listFiles({
+            //     owner: context.payload.repository.owner.login,
+            //     repo: context.payload.repository.name,
+            //     pull_number: context.payload.pull_request.number,
+            // });
+
+            // // Uncomment the following lines if you want to check for private keys in the files
+            // if (checkForPK(files.data)) {
+            //     await context.octokit.issues.createComment({
+            //         owner: context.payload.repository.owner.login,
+            //         repo: context.payload.repository.name,
+            //         issue_number: context.payload.pull_request.number,
+            //         body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+            //     });
+            // }
+
+            // Uncomment the following line if you want to comment with the filename
+            // await context.octokit.issues.createComment({
+            //     owner: context.payload.repository.owner.login,
+            //     repo: context.payload.repository.name,
+            //     issue_number: context.payload.pull_request.number,
+            //     body: files.data[0].filename,
+            // });
+
+            // Commenting with a review
+            await context.octokit.pulls.createReview({
+                owner: context.payload.repository.owner.login,
+                repo: context.payload.repository.name,
+                pull_number: context.payload.pull_request.number,
+                body: "⚠️ This pull request contains a file with a potential private key. Please review and remove it.",
+                event: "COMMENT",
+            });
+        } catch (error) {
+            console.error("Error in pull_request.opened event:", error.message);
+        }
     });
 
     app.on("issues.opened", async (context) => {
-        const params = context.issue({ body: "Hello World!" });
+        try {
+            console.log("Issues opened event triggered");
 
-        return context.octokit.issues.createComment(params);
+            const params = context.issue({ body: "Hello World!" });
+
+            await context.octokit.issues.createComment(params);
+        } catch (error) {
+            console.error("Error in issues.opened event:", error.message);
+        }
     });
 
     app.on("pull_request.reopened", async (context) => {
-        return context.octokit.pulls.createReviewComment({
-            owner: context.payload.repository.owner.login,
-            repo: context.payload.repository.name,
-            pull_number: context.payload.pull_request.number,
-            body: "This pull request has been reopened. Check for private keys is not going to be performed again.",
-        });
+        try {
+            console.log("Pull request reopened event triggered");
+
+            await context.octokit.pulls.createReviewComment({
+                owner: context.payload.repository.owner.login,
+                repo: context.payload.repository.name,
+                pull_number: context.payload.pull_request.number,
+                body: "This pull request has been reopened. Check for private keys is not going to be performed again.",
+            });
+        } catch (error: any) {
+            console.error(
+                "Error in pull_request.reopened event:",
+                error.message,
+            );
+        }
     });
 };
 
+// Function to check for private keys in files
 // function checkForPK(files) {
 //     const keyPattern1: RegExp =
 //         /-----BEGIN (RSA|OPENSSH|DSA|EC|PGP) PRIVATE KEY-----/;
