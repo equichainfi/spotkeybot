@@ -9,7 +9,7 @@ async fn loading(file_path: &str) {
 
     loop {
         i = (i + 1) % loader.len();
-        print!("\r\0{} File: path: {}", loader[i], file_path);
+        print!("\r\0\n{} File: path: {}\n", loader[i], file_path);
         io::stdout().flush().unwrap();
         sleep(Duration::from_millis(100)).await;
     }

@@ -31,16 +31,27 @@ module.exports = app => {
 	app.on(["issue_comment.created", "issue_comment.edited"], async context => {
 		if (context.payload.comment.user.type === "Bot") return;
 
-		if (
-			context.payload.issue.author_association === "OWNER" ||
-			context.payload.issue.author_association === "COLLABORATOR"
-		) {
-			commands(app, "label", (context, command) => {
-				const labels = command.arguments.split(/, */);
-				return context.github.issues.addLabels(
-					context.issue({ labels })
+		if (context.payload.comment.body.startsWith("/label")) {
+			const label = context.payload.comment.body
+				.replace("/label ", "")
+				.trim();
+
+			try {
+				const github = await context.octokit();
+
+				await github.issues.addLabels(
+					context.issue({ labels: [label] })
 				);
-			});
+
+				await github.issues.createComment({
+					owner: context.payload.repository.owner.login,
+					repo: context.payload.repository.name,
+					issue_number: context.payload.issue.number,
+					body: `Added label: ${label}`,
+				});
+			} catch (error) {
+				console.error("Error adding label:", error);
+			}
 		}
 	});
 };

@@ -35,11 +35,20 @@ def process_file(file_paths: list[str]):
                     line_no.append(lines.index(line) + 1)  
         
         # loading(file_path, False)
-        print(f"{Fore.RED}[+] Private Keys Catched: {catched_pv}{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}[+] Line numbers: {line_no.sort()}{Style.RESET_ALL}")
+        # print(f"{Fore.RED}[+] Private Keys Catched: {catched_pv}{Style.RESET_ALL}")
+        # print(f"{Fore.YELLOW}[+] Line numbers: {line_no.sort()}{Style.RESET_ALL}")
         
-    return f"\n[+] All catches: {result}"
+    return format_result(result)
 
+
+def format_result(result: dict[str, list[int]]) -> str:
+    result_str: str = ""
+    for file_path in result.keys():
+        result_str += f"{Fore.RED}\n[+] File: {file_path}{Style.RESET_ALL}\n"
+        for line_no in result[file_path]:
+            result_str += f"{Fore.YELLOW}[+] Line number: {line_no + 1}{Style.RESET_ALL}\n"
+
+    return result_str
 
 def main(file_paths: list[str]) -> str:
     if not isinstance(file_paths, list):
@@ -52,11 +61,14 @@ def main(file_paths: list[str]) -> str:
 def spot(line: str) -> str | None:
     pvkey_reg_ex: str = r"(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)"
     addr_reg_ex: str = r"(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)"
+    reg_ex: str = r"/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/"
 
     if re.search(pvkey_reg_ex, line):
         return f"[+] Private Key found: {line}"
     elif re.search(addr_reg_ex, line):
         return f"[+] Address found: {line}"
+    elif re.search(reg_ex, line):
+        return f"[+] Private Key Block found: {line}"
     else:
         return None
 
@@ -65,7 +77,8 @@ if __name__ == "__main__":
     file_paths: list[str] = [
         "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/eth500.txt",
         "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/main.ts",
-        # "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file.txt",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file.txt",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/cert.txt",
     ]
     # paths = []
     # no_of_paths = int(input("Enter number of paths: "))
