@@ -33,6 +33,8 @@ fn spot(line: &str) -> Option<String> {
 }
 
 async fn process_file(file_path: &str) {
+    let result: Vec<String> = Vec::new();
+    
     if let Ok(file) = std::fs::File::open(file_path) {
         let reader = io::BufReader::new(file);
         for line in reader.lines() {
@@ -48,6 +50,7 @@ async fn main() {
     let file_paths = vec![
         "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/eth500.txt",
         "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/main.ts",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/cert.txt",
     ];
 
     for file_path in file_paths {
