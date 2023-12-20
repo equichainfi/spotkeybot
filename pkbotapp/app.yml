@@ -1,3 +1,17 @@
+# This is a GitHub App Manifest. These settings will be used by default when
+# initially configuring your GitHub App.
+#
+# NOTE: changing this file will not update your GitHub App settings.
+# You must visit github.com/settings/apps/your-app-name to edit them.
+#
+# Read more about configuring your GitHub App:
+# https://probot.github.io/docs/development/#configuring-a-github-app
+#
+# Read more about GitHub App Manifests:
+# https://developer.github.com/apps/building-github-apps/creating-github-apps-from-a-manifest/
+
+# The list of events the GitHub App subscribes to.
+# Uncomment the event names below to enable them.
 default_events:
     - check_run
     - check_suite
@@ -33,10 +47,14 @@ default_events:
     - team_add
     - watch
 
+# The set of permissions needed by the GitHub App. The format of the object uses
+# the permission name for the key (for example, issues) and the access type for
+# the value (for example, write).
+# Valid values are `read`, `write`, and `none`
 default_permissions:
     # Repository creation, deletion, settings, teams, and collaborators.
     # https://developer.github.com/v3/apps/permissions/#permission-on-administration
-    administration: write
+    administration: read
 
     # Checks on code.
     # https://developer.github.com/v3/apps/permissions/#permission-on-checks
@@ -60,7 +78,7 @@ default_permissions:
 
     # Retrieve Pages statuses, configuration, and builds, as well as create new builds.
     # https://developer.github.com/v3/apps/permissions/#permission-on-pages
-    # pages: read
+    pages: read
 
     # Pull requests and related comments, assignees, labels, milestones, and merges.
     # https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests
@@ -68,19 +86,19 @@ default_permissions:
 
     # Manage the post-receive hooks for a repository.
     # https://developer.github.com/v3/apps/permissions/#permission-on-repository-hooks
-    # repository_hooks: read
+    repository_hooks: read
 
     # Manage repository projects, columns, and cards.
     # https://developer.github.com/v3/apps/permissions/#permission-on-repository-projects
-    # repository_projects: read
+    repository_projects: read
 
     # Retrieve security vulnerability alerts.
     # https://developer.github.com/v4/object/repositoryvulnerabilityalert/
-    # vulnerability_alerts: read
+    vulnerability_alerts: read
 
     # Commit statuses.
     # https://developer.github.com/v3/apps/permissions/#permission-on-statuses
-    # statuses: read
+    statuses: write
 
     # Organization members and teams.
     # https://developer.github.com/v3/apps/permissions/#permission-on-members
@@ -92,21 +110,21 @@ default_permissions:
 
     # Manage organization projects, columns, and cards.
     # https://developer.github.com/v3/apps/permissions/#permission-on-organization-projects
-    # organization_projects: read
+    organization_projects: read
 
     # Manage team discussions and related comments.
     # https://developer.github.com/v3/apps/permissions/#permission-on-team-discussions
-    team_discussions: read
+    team_discussions: write
 
     # Manage the post-receive hooks for an organization.
     # https://developer.github.com/v3/apps/permissions/#permission-on-organization-hooks
-    organization_hooks: read
+    # organization_hooks: read
 
     # Get notified of, and update, content references.
     # https://developer.github.com/v3/apps/permissions/
     # organization_administration: read
 # The name of the GitHub App. Defaults to the name specified in package.json
-name: pkbotapp
+name: My Probot App
 
 # The homepage of your GitHub App.
 # url: https://example.com/

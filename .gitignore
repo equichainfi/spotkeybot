@@ -1,7 +1,2 @@
-node_modules
-npm-debug.log
-*.pem
-!mock-cert.pem
-.env
-coverage
-lib
+checkbot/
+l_impl/tests/

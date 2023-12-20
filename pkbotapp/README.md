@@ -1,4 +1,4 @@
-# pkbot
+# pkbotapp
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that A Probot app
 
@@ -16,15 +16,15 @@ npm start
 
 ```sh
 # 1. Build container
-docker build -t pkbot .
+docker build -t pkbotapp .
 
 # 2. Start container
-docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pkbot
+docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pkbotapp
 ```
 
 ## Contributing
 
-If you have suggestions for how pkbot could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+If you have suggestions for how pkbotapp could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
