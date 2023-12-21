@@ -59,15 +59,15 @@ def main(file_paths: list[str]) -> str:
 
 
 def spot(line: str) -> str | None:
-    pvkey_reg_ex: str = r"(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)"
-    addr_reg_ex: str = r"(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)"
-    reg_ex: str = r"/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/"
+    pvkey_regex: str = r"(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)"
+    addr_regex: str = r"(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)"
+    pgp_regex: str = r"/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n\/\.\:\+\ \=]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/"
 
-    if re.search(pvkey_reg_ex, line):
+    if re.search(pvkey_regex, line):
         return f"[+] Private Key found: {line}"
-    elif re.search(addr_reg_ex, line):
+    elif re.search(addr_regex, line):
         return f"[+] Address found: {line}"
-    elif re.search(reg_ex, line):
+    elif re.search(pgp_regex, line):
         return f"[+] Private Key Block found: {line}"
     else:
         return None

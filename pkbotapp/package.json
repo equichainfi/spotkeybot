@@ -1,10 +1,10 @@
 {
   "name": "pkbotapp",
   "version": "1.0.0",
-  "private": true,
-  "description": "A Probot app",
+  "private": false,
+  "description": "Blockchain Security Bot",
   "author": "Olivier Kobialka",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com//",
   "keywords": [
     "probot",
@@ -19,6 +19,7 @@
     "probot": "^12.2.4"
   },
   "devDependencies": {
+    "dotenv": "^16.3.1",
     "jest": "^29.0.0",
     "nock": "^13.0.5",
     "smee-client": "^1.2.2"

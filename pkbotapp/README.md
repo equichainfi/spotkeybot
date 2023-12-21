@@ -1,33 +1,17 @@
-# pkbotapp
+## Private Keys
+ - ETH Private Key ✅
+ - ETH Public Key ✅
+ - PGP Private Key Block ✅
+ - PGP Public Key Block ✅
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A Probot app
+## Implementations
+ - Implementation: l_impl/python/main.py ✅
+ - Implementation: l_impl/rust/main.rs 🧑🏼‍🏭
 
-## Setup
-
-```sh
-# Install dependencies
-npm install
-
-# Run the bot
-npm start
-```
-
-## Docker
-
-```sh
-# 1. Build container
-docker build -t pkbotapp .
-
-# 2. Start container
-docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> pkbotapp
-```
-
-## Contributing
-
-If you have suggestions for how pkbotapp could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
-
-For more, check out the [Contributing Guide](CONTRIBUTING.md).
-
-## License
-
-[ISC](LICENSE) © 2023 Olivier Kobialka
+## Steps
+ 1. Make checks
+ 2. run the implementation in main.py or main.rs
+ 3. if the implementation findes any key, fail the check
+ 4. then add label to the PR, `pk` + add comment with @ of the user who made the PR
+ 5. if the implementation findes no key, pass the check
+ 6. then remove label to the PR, `pk` and change to `secure`
