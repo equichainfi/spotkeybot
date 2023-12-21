@@ -2,6 +2,7 @@
     "name": "pkbotapp",
     "version": "1.0.0",
     "private": false,
+    "type": "commonjs",
     "description": "Blockchain Security Bot",
     "author": "Olivier Kobialka",
     "license": "MIT",
@@ -12,8 +13,9 @@
         "probot-app"
     ],
     "scripts": {
-        "start": "probot run ./index.js",
-        "test": "jest"
+        "start": "probot run ./src/index.js",
+        "test": "jest",
+        "fmt": "npx prettier --write ."
     },
     "dependencies": {
         "probot": "^12.2.4"
