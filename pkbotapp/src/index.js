@@ -5,6 +5,7 @@
 
 const dotenv = require("dotenv");
 const format = require("./lib/format");
+const findKey = require("./lib/findKey");
 dotenv.config();
 
 module.exports = (app) => {
@@ -23,12 +24,13 @@ module.exports = (app) => {
             "pull_request.synchronize",
         ],
         async (context) => {
-            let hasPrivateKey = false;
+            let hasPrivateKey, msg;
 
             const pushedFilesData = await context.octokit.pulls.listFiles({
                 owner: context.payload.repository.owner.login,
                 repo: context.payload.repository.name,
-                pull_number: 16,
+                pull_number: 21,
+                // fix pull_number
             });
 
             const filesArray = [];
@@ -38,7 +40,12 @@ module.exports = (app) => {
                 const filename = file.filename;
                 const additions = file.additions;
                 const deletions = file.deletions;
-                const fileData = file.patch.replace("@@ -0,0 +1 @@\n+", "");
+
+                const fileData = file.patch
+                    .split("\n")
+                    .slice(1)
+                    .join("\n")
+                    .trim();
 
                 const fileObject = {
                     filename: filename,
@@ -47,22 +54,30 @@ module.exports = (app) => {
                     fileData: fileData,
                 };
 
-                filesDataArray.push(fileData);
                 filesArray.push(fileObject);
+                filesDataArray.push({
+                    fileName: filename,
+                    fileContent: fileData,
+                });
             }
 
             console.log(filesDataArray);
+            console.log(findKey(filesDataArray));
+            // hasPrivateKey = findKey(filesDataArray) ? true : false;
 
             if (hasPrivateKey) {
                 // const label = context.issue({ labels: [FOUND_LABEL] });
+                msg = context.issue({
+                    body: `${format(filesArray, hasPrivateKey)}`,
+                });
             } else {
                 const label = context.issue({ labels: [NOT_FOUND_LABEL] });
-                const msg = context.issue({
-                    body: `${format(filesArray)}`,
+                msg = context.issue({
+                    body: `${format(filesArray, hasPrivateKey)}`,
                 });
-
-                await context.octokit.issues.createComment(msg);
             }
+
+            await context.octokit.issues.createComment(msg);
         },
     );
 };

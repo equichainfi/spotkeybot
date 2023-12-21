@@ -11,6 +11,18 @@ def loading(file_path: str, loading_flag: bool) -> str:
         print(f"{Fore.GREEN}\r\033[K%s{Style.RESET_ALL} File: path: {file_path}" % loader[i], flush=True, end="")
         time.sleep(0.1)
 
+"""
+[
+    {
+        file_path: str,
+        lines: list[int],
+        pvkeys_found: list[str],
+        addresses_found: list[str],
+        lines_with_pvkeys: list[int],
+        lines_with_addresses: list[int]
+    }
+]
+"""
 
 def process_file(file_paths: list[str]):
     result: dict[str, list[int]] = {}
@@ -20,7 +32,8 @@ def process_file(file_paths: list[str]):
 
         catched_pv: list[str] = []
         catched_addresses: list[str]=[]
-        line_no: list[int] = []
+        line_number: list[int] = []
+
         with open(file=file_path, mode="r") as file:
             lines: list[str] = file.readlines()
             for line in lines:
@@ -28,15 +41,17 @@ def process_file(file_paths: list[str]):
                 if spot_result and spot_result.startswith("[+] Private Key found"):
                     result.setdefault(file_path, []).append(lines.index(line))
                     catched_pv.append(line)
-                    line_no.append(lines.index(line) + 1)  
+                    line_number.append(lines.index(line) + 1)
+
+
                 elif spot_result and spot_result.startswith("[+] Address found"):
                     result.setdefault(file_path, []).append(lines.index(line))
                     catched_addresses.append(line)
-                    line_no.append(lines.index(line) + 1)  
+                    line_number.append(lines.index(line) + 1)
         
         # loading(file_path, False)
-        # print(f"{Fore.RED}[+] Private Keys Catched: {catched_pv}{Style.RESET_ALL}")
-        # print(f"{Fore.YELLOW}[+] Line numbers: {line_no.sort()}{Style.RESET_ALL}")
+#         print(f"{Fore.RED}[+] Private Keys Catched: {catched_pv}{Style.RESET_ALL}")
+#         print(f"{Fore.YELLOW}[+] Line numbers: {line_number.sort()}{Style.RESET_ALL}")
         
     return format_result(result)
 
@@ -45,8 +60,8 @@ def format_result(result: dict[str, list[int]]) -> str:
     result_str: str = ""
     for file_path in result.keys():
         result_str += f"{Fore.RED}\n[+] File: {file_path}{Style.RESET_ALL}\n"
-        for line_no in result[file_path]:
-            result_str += f"{Fore.YELLOW}[+] Line number: {line_no + 1}{Style.RESET_ALL}\n"
+        for line_number in result[file_path]:
+            result_str += f"{Fore.YELLOW}[+] Line number: {line_number + 1}{Style.RESET_ALL}\n"
 
     return result_str
 
@@ -75,10 +90,8 @@ def spot(line: str) -> str | None:
 
 if __name__ == "__main__":
     file_paths: list[str] = [
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/eth500.txt",
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/main.ts",
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file.txt",
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/cert.txt",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file1.txt",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file2.ts",
     ]
     # paths = []
     # no_of_paths = int(input("Enter number of paths: "))
