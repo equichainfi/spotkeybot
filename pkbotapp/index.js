@@ -6,11 +6,11 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-module.exports = app => {
-	app.log.info("pkbotapp loaded");
+module.exports = (app) => {
+    app.log.info("pkbotapp loaded");
 
-	app.on(
-		["pull_request.opened", "pull_request.reopened", "pull_request.edited"],
-		async context => {}
-	);
+    app.on(
+        ["pull_request.opened", "pull_request.reopened", "pull_request.edited"],
+        async (context) => {},
+    );
 };
