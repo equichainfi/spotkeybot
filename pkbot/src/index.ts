@@ -7,13 +7,11 @@ import {
 } from "probot";
 import dotenv from "dotenv";
 import { findKey, format, addLabel } from "./functions";
-import { EVENTS } from "./functions/utils";
+import { EVENTS, WELCOME_MESSAGE } from "./functions/utils";
 dotenv.config();
 
 export = (app: Probot): void => {
-    app.log.info(
-        "============================= pkbotapp loaded =============================\n",
-    );
+    app.log.info(WELCOME_MESSAGE);
 
     app.on(EVENTS, async (context) => {
         let msg: any, sender: string, label: AddLabelResponse;

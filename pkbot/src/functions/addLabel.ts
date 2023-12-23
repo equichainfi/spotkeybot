@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { AddLabelResponse } from "probot";
 
 export default function addLabel(found: boolean): AddLabelResponse {
