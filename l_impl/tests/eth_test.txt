@@ -1,0 +1,11 @@
+ETH Private Key ✅:
+0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+ETH Public Key ✅:
+0x89abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+Example ETH Private Key:
+0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+Example ETH Public Key:
+0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb

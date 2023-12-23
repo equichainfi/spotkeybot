@@ -1,0 +1,11 @@
+{
+	"kty": "RSA",
+	"n": "[Your JWK Modulus]",
+	"e": "AQAB",
+	"d": "[Your JWK Private Exponent]",
+	"p": "[Your JWK Prime1]",
+	"q": "[Your JWK Prime2]",
+	"dp": "[Your JWK Exponent1]",
+	"dq": "[Your JWK Exponent2]",
+	"qi": "[Your JWK Coefficient]"
+}
