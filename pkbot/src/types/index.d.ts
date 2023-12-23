@@ -27,4 +27,10 @@ declare module "probot" {
         deletions: number;
         fileData: string | undefined;
     }
+
+    interface IFormatInput {
+        filesArray: IFileObject[];
+        found: boolean;
+        sender: string;
+    }
 }

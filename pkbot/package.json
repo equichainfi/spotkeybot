@@ -15,7 +15,8 @@
         "build": "tsc",
         "start": "probot run ./lib/index.js",
         "test": "jest",
-        "fmt": "npx prettier --write ."
+        "fmt": "npx prettier --write .",
+        "dev": "npm run build && npm run start"
     },
     "dependencies": {
         "probot": "^12.2.4"
