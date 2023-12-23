@@ -11,12 +11,15 @@
 | RSA Private Key                  | ❌            | ✅            |
 | PKCS                             | ❌            | ✅            |
 | PBKDF2                           | ❌            | ✅            |
-| PuTTY Private Key v2/v3          | ❌            | ✅            |
+| PuTTY Private Key v2/v3          | ✅            | ✅            |
 | OpenSSH Private Key              | ❌            | ✅            |
 | OpenSSH Encrypted Private Key    | ❌            | ✅            |
-| JWK Private Key                  | ❌            | ✅            |
+| JWK Private Key                  | ✅            | ✅            |
 | XML Private Key                  | ❌            | ✅            |
-| MSBLOB Private Key && Public Key | ❌            | ✅            |
+| MSBLOB                           | ❌            | ✅            |
+| ECDSA                            | ✅            | ✅            |
+| DSA                              | ❌            | ✅            |
+| SSL                              | ✅            | ✅            |
 
 [Docs](https://phpseclib.com/docs/rsa-keys) 👆🏼
 
