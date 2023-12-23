@@ -17,13 +17,7 @@ var NOT_FOUND_MSG = "No Private Keys found!";
 function findKey(files) {
     var result = processFile(files);
     if (result.length === 0)
-        return [
-            {
-                fileName: "",
-                lineNumbers: [],
-                keysFound: [NOT_FOUND_MSG],
-            },
-        ];
+        return null;
     return result;
 }
 function processFile(files) {

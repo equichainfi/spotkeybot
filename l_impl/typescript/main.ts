@@ -29,17 +29,10 @@ const PGP_KEY_FOUND: string = "[+] PGP Key found";
 
 const NOT_FOUND_MSG: string = "No Private Keys found!";
 
-function findKey(files: IFiles[]): MainImplResponse[] {
+function findKey(files: IFiles[]): MainImplResponse[] | null {
 	const result = processFile(files);
 
-	if (result.length === 0)
-		return [
-			{
-				fileName: "",
-				lineNumbers: [],
-				keysFound: [NOT_FOUND_MSG],
-			},
-		];
+	if (result.length === 0) return null;
 
 	return result;
 }

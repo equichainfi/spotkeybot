@@ -1,24 +1,22 @@
-import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
+import {
+    AddLabelResponse,
+    IFileObject,
+    IFiles,
+    MainImplResponse,
+    Probot,
+} from "probot";
 import dotenv from "dotenv";
-import { findKey, format } from "./lib";
+import { findKey, format, addLabel } from "./functions";
+import { EVENTS } from "./functions/utils";
 dotenv.config();
 
 export = (app: Probot): void => {
-    const NOT_FOUND_LABEL: string = process.env.NOT_FOUND_LABEL!;
-    const FOUND_LABEL: string = process.env.FOUND_LABEL!;
-    const EVENTS: any[] = [
-        "pull_request.opened",
-        "pull_request.reopened",
-        "pull_request.edited",
-        "pull_request.synchronize",
-    ];
-
     app.log.info(
         "============================= pkbotapp loaded =============================\n",
     );
 
     app.on(EVENTS, async (context) => {
-        let msg: any, sender: string;
+        let msg: any, sender: string, label: AddLabelResponse;
 
         const pushedFilesData = await context.octokit.pulls.listFiles({
             owner: context.payload.repository.owner.login,
@@ -51,40 +49,35 @@ export = (app: Probot): void => {
             });
         }
 
-        // console.log(filesDataArray);
-
-        const privateKeysResult: MainImplResponse[] = findKey(
+        const privateKeysResult: MainImplResponse[] | string = findKey(
             filesDataArray.map((file) => ({
                 fileName: file.fileName,
                 fileContent: file.fileContent,
             })),
         );
 
-        console.log(
-            findKey(
-                filesDataArray.map((file) => ({
-                    fileName: file.fileName,
-                    fileContent: file.fileContent,
-                })),
-            ),
-        );
+        console.log(privateKeysResult);
 
         let hasPrivateKey: boolean = privateKeysResult.length > 0;
-
-        if (hasPrivateKey)
-            await context.octokit.issues.addLabels(
-                context.issue({ labels: [FOUND_LABEL] }),
-            );
-        else
-            await context.octokit.issues.addLabels(
-                context.issue({ labels: [NOT_FOUND_LABEL] }),
-            );
 
         sender = context.payload.sender.login;
         msg = context.issue({
             body: `${format({ filesArray, found: hasPrivateKey, sender })}`,
         });
+        label = addLabel(hasPrivateKey);
 
+        await context.octokit.issues.addLabels({
+            owner: context.payload.repository.owner.login,
+            repo: context.payload.repository.name,
+            issue_number: context.payload.pull_request.number,
+            labels: [label],
+        });
         await context.octokit.issues.createComment(msg);
     });
 };
+
+/**
+ * 1. check if repo is private
+ * 2. if repo is private, then print msg to PR chat
+ * 3. else ... idk
+ */

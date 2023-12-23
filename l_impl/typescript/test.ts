@@ -24,7 +24,7 @@ import {
 	PV_KEY_FOUND,
 	ADDRESS_FOUND,
 	PGP_KEY_FOUND,
-} from "../../pkbot/src/lib/utils";
+} from "../../pkbot/src/functions/utils";
 
 export default function findKey(files: IFiles) {
 	const result = processFile(files);
