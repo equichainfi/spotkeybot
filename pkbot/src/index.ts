@@ -1,12 +1,6 @@
-import {
-    AddLabelResponse,
-    IFileObject,
-    IFiles,
-    MainImplResponse,
-    Probot,
-} from "probot";
 import dotenv from "dotenv";
-import { findKey, format, addLabel } from "./functions";
+import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
+import { findKey, format } from "./functions";
 import { EVENTS, WELCOME_MESSAGE } from "./functions/utils";
 dotenv.config();
 
@@ -14,7 +8,7 @@ export = (app: Probot): void => {
     app.log.info(WELCOME_MESSAGE);
 
     app.on(EVENTS, async (context) => {
-        let msg: any, sender: string, label: AddLabelResponse;
+        let msg, sender: string;
 
         const pushedFilesData = await context.octokit.pulls.listFiles({
             owner: context.payload.repository.owner.login,
@@ -45,6 +39,7 @@ export = (app: Probot): void => {
                 fileName: filename,
                 fileContent: fileData,
             });
+            console.log(filesDataArray);
         }
 
         const privateKeysResult: MainImplResponse[] | string = findKey(
@@ -62,14 +57,15 @@ export = (app: Probot): void => {
         msg = context.issue({
             body: `${format({ filesArray, found: hasPrivateKey, sender })}`,
         });
-        label = addLabel(hasPrivateKey);
+        // label = addLabel(hasPrivateKey);
 
-        await context.octokit.issues.addLabels({
-            owner: context.payload.repository.owner.login,
-            repo: context.payload.repository.name,
-            issue_number: context.payload.pull_request.number,
-            labels: [label],
-        });
+        // await context.octokit.issues.addLabels({
+        //     owner: context.payload.repository.owner.login,
+        //     repo: context.payload.repository.name,
+        //     issue_number: context.payload.pull_request.number,
+        //     labels: [label],
+        // });
+
         await context.octokit.issues.createComment(msg);
     });
 };

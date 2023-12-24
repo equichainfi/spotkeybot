@@ -1,13 +1,11 @@
 import { FindKeyResult, IFiles, MainImplResponse, Response } from "probot";
 import {
     ADDRESS_FOUND,
-    ETH_ADDRESS_REGEX,
-    ETH_PV_KEY_REGEX,
     NOT_FOUND_MSG,
     PGP_KEY_FOUND,
-    PGP_KEY_REGEX,
     PV_KEY_FOUND,
 } from "./utils";
+import { ETH_ADDRESS_REGEX, ETH_PV_KEY_REGEX, PGP_KEY_REGEX } from "./regex";
 
 export default function findKey(files: IFiles[]): Response {
     const result: Response = processFile(files);

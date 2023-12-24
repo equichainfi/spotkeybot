@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { IFileObject, IFormatInput } from "probot";
 
 export default function format({
@@ -22,7 +23,7 @@ export default function format({
         const filesContent: string = filesArray
             .map(
                 (file: IFileObject) =>
-                    `**===== ${file.filename} =====**\n\`\`\`${getFileLanguage(
+                    `**===== ${file.filename} =====**\n\`\`\`${getFileExtension(
                         file.filename,
                     )}\n${file.fileData}\n\`\`\``,
             )
@@ -34,6 +35,6 @@ export default function format({
     }
 }
 
-function getFileLanguage(fileName: string): string {
+function getFileExtension(fileName: string): string {
     return (fileName.split(".").pop() || "").toLowerCase();
 }

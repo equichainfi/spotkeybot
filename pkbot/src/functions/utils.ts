@@ -1,8 +1,5 @@
-export const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
-export const ETH_ADDRESS_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{40}$/;
-export const PGP_KEY_REGEX: RegExp =
-    /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/;
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// MESSAGES
 export const PV_KEY_FOUND: string = "[+] Private Key found";
 export const ADDRESS_FOUND: string = "[+] Address found";
 export const PGP_KEY_FOUND: string = "[+] PGP Key found";
