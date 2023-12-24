@@ -1,14 +1,14 @@
 import dotenv from "dotenv";
 import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
 import { findKey, format } from "./functions";
-import { EVENTS, WELCOME_MESSAGE } from "./functions/utils";
+import { EVENTS, NOT_FOUND_MSG, WELCOME_MESSAGE } from "./functions/utils";
 dotenv.config();
 
 export = (app: Probot): void => {
     app.log.info(WELCOME_MESSAGE);
 
     app.on(EVENTS, async (context) => {
-        let msg, sender: string;
+        let msg, sender: string, found: boolean;
 
         const pushedFilesData = await context.octokit.pulls.listFiles({
             owner: context.payload.repository.owner.login,
@@ -39,9 +39,11 @@ export = (app: Probot): void => {
                 fileName: filename,
                 fileContent: fileData,
             });
-            console.log(filesDataArray);
         }
 
+        /**
+         * idk, when i get NOT_FOUND_MSG, it works but found is still true no matter what and res in MD is like found === true
+         */
         const privateKeysResult: MainImplResponse[] | string = findKey(
             filesDataArray.map((file) => ({
                 fileName: file.fileName,
@@ -49,13 +51,11 @@ export = (app: Probot): void => {
             })),
         );
 
-        console.log(privateKeysResult);
-
-        let hasPrivateKey: boolean = privateKeysResult.length > 0;
+        found = privateKeysResult !== NOT_FOUND_MSG ? true : false;
 
         sender = context.payload.sender.login;
         msg = context.issue({
-            body: `${format({ filesArray, found: hasPrivateKey, sender })}`,
+            body: `${format({ filesArray, found, sender })}`,
         });
         // label = addLabel(hasPrivateKey);
 

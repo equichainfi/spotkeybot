@@ -30,9 +30,7 @@ export default function format({
             .join("\n\n");
 
         return `${header}\n\n### Files changed:\n${filesChanged}\n\n### Files content:\n${filesContent}\n\n`;
-    } else {
-        return `${header}`;
-    }
+    } else return `${header}`;
 }
 
 function getFileExtension(fileName: string): string {

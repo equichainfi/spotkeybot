@@ -22,61 +22,53 @@ function processFile(files: IFiles[]): Response {
         if (!file.fileName) continue;
 
         let caughtKeys: string[] = [];
-        let caughtAddresses: string[] = [];
         let caughtLineNumbers: number[] = [];
         let fileName: string = file.fileName;
         let lineContent: string[] = [];
 
         const lines: string[] = file.fileContent.split("\n");
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
+        for (
+            let lineNumber: number = 0;
+            lineNumber < lines.length;
+            lineNumber++
+        ) {
+            const line: string = lines[lineNumber];
 
-            if (line.startsWith("+")) {
-                let spotResult: string | boolean = spotPrivateKey(line);
+            let spotResult: string | boolean = spotPrivateKey(line, lineNumber);
+            if (
+                spotResult &&
+                (spotResult.startsWith(PV_KEY_FOUND) ||
+                    spotResult.startsWith(ADDRESS_FOUND) ||
+                    spotResult.startsWith(PGP_KEY_FOUND))
+            ) {
+                const privateKey: string = spotResult.split(": ")[1];
 
-                if (spotResult && spotResult.startsWith(PV_KEY_FOUND)) {
-                    const privateKey: string = spotResult.split(": ")[1];
-                    const lineNumber: number = i + 1;
-
-                    caughtLineNumbers.push(lineNumber);
-                    caughtKeys.push(privateKey);
-                } else if (spotResult && spotResult.startsWith(ADDRESS_FOUND)) {
-                    const address: string = spotResult.split(": ")[1];
-                    const lineNumber: number = i + 1;
-
-                    caughtLineNumbers.push(lineNumber);
-                    caughtAddresses.push(address);
-                } else if (spotResult && spotResult.startsWith(PGP_KEY_FOUND)) {
-                    const pgpKey: string = spotResult.split(": ")[1];
-                    const lineNumber: number = i + 1;
-
-                    caughtLineNumbers.push(lineNumber);
-                    caughtKeys.push(pgpKey);
-                } else lineContent.push(line);
-            } else if (line.startsWith("-")) continue;
+                caughtLineNumbers.push(lineNumber);
+                caughtKeys.push(privateKey);
+            } else lineContent.push(line);
         }
 
         result.push({
             fileName: fileName,
             lineContent: lineContent.join("\n"),
-            lineNumbers: caughtLineNumbers,
-            keysFound: caughtKeys,
-            addressesFound: caughtAddresses,
-            numberOfKeysFound: caughtKeys.length + caughtAddresses.length,
+            lineNumbers: caughtLineNumbers || [],
+            keysFound: caughtKeys || [],
+            numberOfKeysFound: caughtKeys.length || 0,
         });
     }
 
     return formatResult(result);
 }
 
-function spotPrivateKey(line: string) {
-    if (typeof line !== "string") throw new Error("line must be a string");
-
-    if (line.match(ETH_PV_KEY_REGEX)) return `${PV_KEY_FOUND}: ${line}`;
-    else if (line.match(ETH_ADDRESS_REGEX)) return `${ADDRESS_FOUND}: ${line}`;
-    else if (line.match(PGP_KEY_REGEX)) return `${PGP_KEY_FOUND}: ${line}`;
-    else return "none";
+function spotPrivateKey(line: string, lineNumber: number): string {
+    if (ETH_PV_KEY_REGEX.test(line))
+        return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
+    else if (ETH_ADDRESS_REGEX.test(line))
+        return `${ADDRESS_FOUND} in line ${lineNumber + 1}: ${line}`;
+    else if (PGP_KEY_REGEX.test(line))
+        return `${PGP_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
+    else return `Found nothing in line ${lineNumber + 1}`;
 }
 
 function formatResult(result: FindKeyResult[]): Response {
@@ -94,10 +86,10 @@ function formatResult(result: FindKeyResult[]): Response {
     }
 
     for (const file of formattedResult) {
-        if (file.keysFound.length === 0 && file.lineNumbers.length === 0)
-            found = false;
-        if (file.fileName === "") found = false;
-        else found = true;
+        if (file.keysFound.length > 0 || file.lineNumbers.length > 0) {
+            found = true;
+            break;
+        }
     }
 
     return found ? formattedResult : NOT_FOUND_MSG;

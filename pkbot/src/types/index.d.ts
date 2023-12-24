@@ -13,7 +13,6 @@ declare module "probot" {
         lineContent: string;
         lineNumbers: number[];
         keysFound: string[];
-        addressesFound: string[];
         numberOfKeysFound: number;
     }
 
