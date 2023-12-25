@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
+import { IFileObject, IFiles, Probot } from "probot";
 import { findKey, format } from "./functions";
 import { EVENTS, NOT_FOUND_MSG, WELCOME_MESSAGE } from "./functions/utils";
 dotenv.config();
@@ -15,6 +15,7 @@ export = (app: Probot): void => {
             repo: context.payload.repository.name,
             pull_number: context.payload.pull_request.number,
         });
+        console.log("pushedFilesData", pushedFilesData);
 
         const filesArray: IFileObject[] = [];
         const filesDataArray: IFiles[] = [];
@@ -39,19 +40,33 @@ export = (app: Probot): void => {
                 fileName: filename,
                 fileContent: fileData,
             });
+
+            console.log("fileDataArray", filesDataArray);
         }
 
         /**
          * idk, when i get NOT_FOUND_MSG, it works but found is still true no matter what and res in MD is like found === true
          */
-        const privateKeysResult: MainImplResponse[] | string = findKey(
-            filesDataArray.map((file) => ({
-                fileName: file.fileName,
-                fileContent: file.fileContent,
-            })),
-        );
 
-        found = privateKeysResult !== NOT_FOUND_MSG ? true : false;
+        if (
+            typeof findKey(
+                filesDataArray.map((file) => ({
+                    fileName: file.fileName,
+                    fileContent: file.fileContent,
+                })),
+            ) === NOT_FOUND_MSG
+        )
+            found = false;
+        else found = true;
+
+        // const privateKeysResult: MainImplResponse[] | string = findKey(
+        //     filesDataArray.map((file) => ({
+        //         fileName: file.fileName,
+        //         fileContent: file.fileContent,
+        //     })),
+        // );
+
+        // found = privateKeysResult !== NOT_FOUND_MSG ? true : false;
 
         sender = context.payload.sender.login;
         msg = context.issue({
@@ -69,9 +84,3 @@ export = (app: Probot): void => {
         await context.octokit.issues.createComment(msg);
     });
 };
-
-/**
- * 1. check if repo is private
- * 2. if repo is private, then print msg to PR chat
- * 3. else ... idk
- */

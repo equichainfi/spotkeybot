@@ -1,15 +1,13 @@
-// You can import your modules
-// import index from '../src/index'
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import nock from "nock";
 // Requiring our app implementation
 import myProbotApp from "../src";
 import { Probot, ProbotOctokit } from "probot";
-// Requiring our fixtures
 import payload from "./fixtures/issues.opened.json";
 const issueCreatedBody = { body: "Thanks for opening this issue!" };
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import test, { afterEach, beforeEach, describe } from "node:test";
 
 const privateKey = fs.readFileSync(
     path.join(__dirname, "fixtures/mock-cert.pem"),
@@ -30,7 +28,7 @@ describe("My Probot app", () => {
                 throttle: { enabled: false },
             }),
         });
-        // Load our app into probot
+
         probot.load(myProbotApp);
     });
 
@@ -66,12 +64,3 @@ describe("My Probot app", () => {
         nock.enableNetConnect();
     });
 });
-
-// For more information about testing with Jest see:
-// https://facebook.github.io/jest/
-
-// For more information about using TypeScript in your tests, Jest recommends:
-// https://github.com/kulshekhar/ts-jest
-
-// For more information about testing with Nock see:
-// https://github.com/nock/nock

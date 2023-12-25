@@ -1,3 +1,10 @@
+type Response = MainImplResponse[] | string;
+
+interface AddLabelResponse {
+	name: string;
+	color: string;
+}
+
 interface FindKeyResult {
 	fileName: string;
 	lineContent: string;
@@ -17,7 +24,18 @@ interface MainImplResponse {
 	keysFound: string[];
 }
 
-type Response = MainImplResponse[] | string;
+interface IFileObject {
+	filename: string;
+	additions: number;
+	deletions: number;
+	fileData: string | undefined;
+}
+
+interface IFormatInput {
+	filesArray: IFileObject[];
+	found: boolean;
+	sender: string;
+}
 
 const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
 const ETH_ADDRESS_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{40}$/;
@@ -117,15 +135,3 @@ function formatResult(result: FindKeyResult[]): Response {
 
 	return found ? formattedResult : NOT_FOUND_MSG;
 }
-
-const f =
-	"ETH Private Key ✅:\n0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n\n0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\nETH Public Key ✅:\n0x9a116E22E1247B8cbEb4693B2BcF20c21C477394";
-
-console.log(
-	findKey([
-		{
-			fileName: "src/file1.txt",
-			fileContent: f,
-		},
-	])
-);
