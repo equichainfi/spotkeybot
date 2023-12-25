@@ -25,11 +25,11 @@ const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
 const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
 const PGP_KEY_REGEX: RegExp =
 	/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
+const CLEAN_LINE_REGEX: RegExp = /^\s*\+/;
 
 const PV_KEY_FOUND: string = "[+] Private Key found";
 const ADDRESS_FOUND: string = "[+] Address found";
 const PGP_KEY_FOUND: string = "[+] PGP Key found";
-
 const NOT_FOUND_MSG: string = "[-] No Private Keys found!";
 
 export default function findKey(files: IFiles[]): Response {
@@ -86,12 +86,21 @@ function processFile(files: IFiles[]): Response {
 	return formatResult(result);
 }
 
+function cleanLine(line: string): string {
+	const CLEAN_LINE_REGEX = /^\s*[\+\-]/;
+
+	let newLine: string = line.replace(CLEAN_LINE_REGEX, "");
+	newLine = newLine.replace(/[^a-fA-F0-9\-]+/g, "");
+
+	return newLine;
+}
+
 function spotPrivateKey(line: string, lineNumber: number): string {
-	if (ETH_PV_KEY_REGEX.test(line))
+	if (ETH_PV_KEY_REGEX.test(cleanLine(line)))
 		return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
-	else if (ETH_ADDRESS_REGEX.test(line))
+	else if (ETH_ADDRESS_REGEX.test(cleanLine(line)))
 		return `${ADDRESS_FOUND} in line ${lineNumber + 1}: ${line}`;
-	else if (PGP_KEY_REGEX.test(line))
+	else if (PGP_KEY_REGEX.test(cleanLine(line)))
 		return `${PGP_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
 	else return `Found nothing in line ${lineNumber + 1}`;
 }
@@ -102,7 +111,6 @@ function formatResult(result: FindKeyResult[]): Response {
 
 	for (const fileData of result) {
 		const lineNumbers: number[] = [...new Set(fileData.lineNumbers)];
-
 		formattedResult.push({
 			fileName: fileData.fileName,
 			lineNumbers: lineNumbers,
@@ -120,11 +128,4 @@ function formatResult(result: FindKeyResult[]): Response {
 	return found ? formattedResult : NOT_FOUND_MSG;
 }
 
-console.log(
-	findKey([
-		{
-			fileName: "src/file1.txt",
-			fileContent: fileDataArray[0].fileContent,
-		},
-	])
-);
+console.log(findKey(fileDataArray));

@@ -13,6 +13,7 @@ var in_1 = require("./in");
 var ETH_PV_KEY_REGEX = /^(0x)?[0-9a-fA-F]{64}$/;
 var ETH_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 var PGP_KEY_REGEX = /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
+var CLEAN_LINE_REGEX = /^\s*\+/;
 var PV_KEY_FOUND = "[+] Private Key found";
 var ADDRESS_FOUND = "[+] Address found";
 var PGP_KEY_FOUND = "[+] PGP Key found";
@@ -59,12 +60,18 @@ function processFile(files) {
     }
     return formatResult(result);
 }
+function cleanLine(line) {
+    var CLEAN_LINE_REGEX = /^\s*[\+\-]/;
+    var newLine = line.replace(CLEAN_LINE_REGEX, "");
+    newLine = newLine.replace(/[^a-fA-F0-9\-]+/g, "");
+    return newLine;
+}
 function spotPrivateKey(line, lineNumber) {
-    if (ETH_PV_KEY_REGEX.test(line))
+    if (ETH_PV_KEY_REGEX.test(cleanLine(line)))
         return "".concat(PV_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
-    else if (ETH_ADDRESS_REGEX.test(line))
+    else if (ETH_ADDRESS_REGEX.test(cleanLine(line)))
         return "".concat(ADDRESS_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
-    else if (PGP_KEY_REGEX.test(line))
+    else if (PGP_KEY_REGEX.test(cleanLine(line)))
         return "".concat(PGP_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
     else
         return "Found nothing in line ".concat(lineNumber + 1);
@@ -90,9 +97,4 @@ function formatResult(result) {
     }
     return found ? formattedResult : NOT_FOUND_MSG;
 }
-console.log(findKey([
-    {
-        fileName: "src/file1.txt",
-        fileContent: in_1.fileDataArray[0].fileContent,
-    },
-]));
+console.log(findKey(in_1.fileDataArray));
