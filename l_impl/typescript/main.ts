@@ -1,9 +1,4 @@
-type Response = MainImplResponse[] | string;
-
-interface AddLabelResponse {
-	name: string;
-	color: string;
-}
+import { fileDataArray } from "./in";
 
 interface FindKeyResult {
 	fileName: string;
@@ -24,21 +19,10 @@ interface MainImplResponse {
 	keysFound: string[];
 }
 
-interface IFileObject {
-	filename: string;
-	additions: number;
-	deletions: number;
-	fileData: string | undefined;
-}
-
-interface IFormatInput {
-	filesArray: IFileObject[];
-	found: boolean;
-	sender: string;
-}
+type Response = MainImplResponse[] | string;
 
 const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
-const ETH_ADDRESS_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{40}$/;
+const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
 const PGP_KEY_REGEX: RegExp =
 	/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
 
@@ -46,7 +30,7 @@ const PV_KEY_FOUND: string = "[+] Private Key found";
 const ADDRESS_FOUND: string = "[+] Address found";
 const PGP_KEY_FOUND: string = "[+] PGP Key found";
 
-const NOT_FOUND_MSG: string = "No Private Keys found!";
+const NOT_FOUND_MSG: string = "[-] No Private Keys found!";
 
 export default function findKey(files: IFiles[]): Response {
 	const result: Response = processFile(files);
@@ -135,3 +119,12 @@ function formatResult(result: FindKeyResult[]): Response {
 
 	return found ? formattedResult : NOT_FOUND_MSG;
 }
+
+console.log(
+	findKey([
+		{
+			fileName: "src/file1.txt",
+			fileContent: fileDataArray[0].fileContent,
+		},
+	])
+);

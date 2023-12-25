@@ -9,13 +9,14 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var in_1 = require("./in");
 var ETH_PV_KEY_REGEX = /^(0x)?[0-9a-fA-F]{64}$/;
-var ETH_ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/;
+var ETH_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 var PGP_KEY_REGEX = /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
 var PV_KEY_FOUND = "[+] Private Key found";
 var ADDRESS_FOUND = "[+] Address found";
 var PGP_KEY_FOUND = "[+] PGP Key found";
-var NOT_FOUND_MSG = "No Private Keys found!";
+var NOT_FOUND_MSG = "[-] No Private Keys found!";
 function findKey(files) {
     var result = processFile(files);
     if (result === NOT_FOUND_MSG)
@@ -89,10 +90,9 @@ function formatResult(result) {
     }
     return found ? formattedResult : NOT_FOUND_MSG;
 }
-var f = "ETH Private Key ✅:\n0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n\n0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\nETH Public Key ✅:\n0x9a116E22E1247B8cbEb4693B2BcF20c21C477394";
 console.log(findKey([
     {
         fileName: "src/file1.txt",
-        fileContent: f,
+        fileContent: in_1.fileDataArray[0].fileContent,
     },
 ]));

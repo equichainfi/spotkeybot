@@ -3,7 +3,7 @@ interface IFiles {
 	fileContent: string;
 }
 
-const fileDataArray: IFiles[] = [
+export const fileDataArray: IFiles[] = [
 	{
 		fileName: "test/btc_test.txt",
 		fileContent:

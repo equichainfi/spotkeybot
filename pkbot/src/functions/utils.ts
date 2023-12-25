@@ -4,7 +4,7 @@ export const PV_KEY_FOUND: string = "[+] Private Key found";
 export const ADDRESS_FOUND: string = "[+] Address found";
 export const PGP_KEY_FOUND: string = "[+] PGP Key found";
 
-export const NOT_FOUND_MSG: string = "No Private Keys found!";
+export const NOT_FOUND_MSG: string = "[-] No Private Keys found!";
 
 // LABELS
 export const FOUND_LABEL_MESSAGE: string = "vulnerable";
