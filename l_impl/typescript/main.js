@@ -1,126 +1,99 @@
-var files = [
-    {
-        fileName: "./src/file1.ts",
-        fileContent: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef\n" +
-            "10ac8b8edd8935b0999cfc9a45ed1f02f7ff798854e973794b64c4dc2a6fa451\n" +
-            "\n" +
-            "TEST: 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef\n",
-    },
-    {
-        fileName: "./src/file2.ts",
-        fileContent: "function sumMatrix(matrix: number[][]) {\n" +
-            "\tvar sum = 0;\n" +
-            "\tfor (var i = 0; i < matrix.length; i++) {\n" +
-            "\t\tvar currentRow = matrix[i];\n" +
-            "\t\tfor (var i = 0; i < currentRow.length; i++) {\n" +
-            "\t\t\tsum += currentRow[i];\n" +
-            "\t\t}\n" +
-            "\t}\n" +
-            "\treturn sum;\n" +
-            "}\n" +
-            "\n" +
-            "function f(shouldInitialize: boolean) {\n" +
-            "\tif (shouldInitialize) {\n" +
-            "\t\tvar x = 10;\n" +
-            "\t}\n" +
-            "\treturn x;\n" +
-            "}\n" +
-            "// 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef\n" +
-            "f(true); // returns '10'\n" +
-            "f(false); // returns 'undefined'\n" +
-            "\n" +
-            "for (var i = 0; i < 10; i++) {\n" +
-            "\tsetTimeout(function () {\n" +
-            "\t\tconsole.log(i);\n" +
-            "\t}, 100 * i);\n" +
-            "}\n",
-    },
-];
-var ETH_PV_KEY_REGEX = /^(0x)?[0-9a-fA-F]{64}$/;
-var ETH_ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/;
-var PGP_KEY_REGEX = /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/;
-function main(files) {
-    var res = processFile(files);
-    return res;
+"use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var in_1 = require("./in");
+var ETH_PV_KEY_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)/;
+var ETH_ADDRESS_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)/;
+var BTC_PV_KEY_REGEX = / ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
+var PGP_KEY_REGEX = /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
+var PV_KEY_FOUND = "[+] Private Key found";
+var ADDRESS_FOUND = "[+] Address found";
+var PGP_KEY_FOUND = "[+] PGP Key found";
+var NOT_FOUND_MSG = "[-] No Private Keys found!";
+function findKey(files) {
+    var result = processFile(files);
+    if (result === NOT_FOUND_MSG)
+        return NOT_FOUND_MSG;
+    return result;
 }
+exports.default = findKey;
 function processFile(files) {
     var result = [];
-    var formmatedResult = "";
     for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
         var file = files_1[_i];
+        if (!file.fileName)
+            continue;
         var caughtKeys = [];
-        var caughtAddresses = [];
         var caughtLineNumbers = [];
         var fileName = file.fileName;
         var lineContent = [];
         var lines = file.fileContent.split("\n");
-        for (var _a = 0, lines_1 = lines; _a < lines_1.length; _a++) {
-            var line = lines_1[_a];
-            var lineResult = spotKeys(line);
-            if (lineResult && (lineResult.startsWith("[+] Ethereum pv key founded:") || lineResult.startsWith("[+] PGP key founded:"))) {
-                var privateKey = lineResult.split(": ")[1];
-                var lineNumber = lines.indexOf(line) + 1;
+        for (var lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+            var line = lines[lineNumber];
+            var spotResult = spotPrivateKey(line, lineNumber);
+            if (spotResult &&
+                (spotResult.startsWith(PV_KEY_FOUND) ||
+                    spotResult.startsWith(ADDRESS_FOUND) ||
+                    spotResult.startsWith(PGP_KEY_FOUND))) {
+                var privateKey = spotResult.split(": ")[1];
+                caughtLineNumbers.push(lineNumber);
                 caughtKeys.push(privateKey);
-                caughtLineNumbers.push(lineNumber);
             }
-            else if (lineResult && lineResult.startsWith("[+] Ethereum address founded:")) {
-                var address = lineResult.split(": ")[1];
-                var lineNumber = lines.indexOf(line) + 1;
-                caughtAddresses.push(address);
-                caughtLineNumbers.push(lineNumber);
-            }
-            if (lineResult) {
+            else
                 lineContent.push(line);
-            }
         }
         result.push({
             fileName: fileName,
             lineContent: lineContent.join("\n"),
-            lineNumbers: caughtLineNumbers,
-            keysFound: caughtKeys,
-            addressesFound: caughtAddresses,
-            numberOfKeysFound: caughtKeys.length + caughtAddresses.length,
+            lineNumbers: caughtLineNumbers || [],
+            keysFound: extractLineFromKey(caughtKeys.join("\n")).split("\n") || [],
+            numberOfKeysFound: caughtKeys.length || 0,
         });
     }
-    console.log(format(result));
-    return result;
+    return formatResult(result);
 }
-function format(result) {
-    return result.map(function (fileResult) {
-        return "============ File: ".concat(fileResult.fileName, " ============\n") +
-            "Line: ".concat(fileResult.lineNumbers.join(", ") ? fileResult.lineNumbers.join(", ") : "None", "\n") +
-            "Keys found: ".concat(fileResult.keysFound.length > 0 ? fileResult.keysFound.join(", ") : "None", "\n") +
-            "Addresses found: ".concat(fileResult.addressesFound.length > 0 ? fileResult.addressesFound.join(", ") : "None", "\n") +
-            "Number of addresses found: ".concat(fileResult.addressesFound.length > 0 ? fileResult.addressesFound.length : "None\n") +
-            "Number of keys found: ".concat(fileResult.numberOfKeysFound ? fileResult.numberOfKeysFound : "None", "\n") +
-            "Line content: ".concat(fileResult.lineContent.length > 0 ? fileResult.lineContent : "None", "\n");
-    }).join("\n");
+function spotPrivateKey(line, lineNumber) {
+    if (ETH_PV_KEY_REGEX.test(line))
+        return "".concat(PV_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
+    else if (ETH_ADDRESS_REGEX.test(line))
+        return "".concat(ADDRESS_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
+    else if (PGP_KEY_REGEX.test(line))
+        return "".concat(PGP_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
+    else if (BTC_PV_KEY_REGEX.test(line))
+        return "".concat(PV_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
+    else
+        return "Found nothing in line ".concat(lineNumber + 1);
 }
-function spotKeys(line) {
-    if (line.match(ETH_PV_KEY_REGEX)) {
-        return "[+] Ethereum pv key founded: ".concat(line);
+function formatResult(result) {
+    var formattedResult = [];
+    var found = false;
+    for (var _i = 0, result_1 = result; _i < result_1.length; _i++) {
+        var fileData = result_1[_i];
+        var lineNumbers = __spreadArray([], new Set(fileData.lineNumbers), true);
+        formattedResult.push({
+            fileName: fileData.fileName,
+            lineNumbers: lineNumbers,
+            keysFound: fileData.keysFound,
+        });
     }
-    else if (line.match(ETH_ADDRESS_REGEX)) {
-        return "[+] Ethereum address founded: ".concat(line);
+    for (var _a = 0, formattedResult_1 = formattedResult; _a < formattedResult_1.length; _a++) {
+        var file = formattedResult_1[_a];
+        if (file.keysFound.length > 0 || file.lineNumbers.length > 0) {
+            found = true;
+            break;
+        }
     }
-    else if (line.match(PGP_KEY_REGEX)) {
-        return "[+] PGP key founded: ".concat(line);
-    }
-    else {
-        return null;
-    }
+    return found ? formattedResult : NOT_FOUND_MSG;
 }
-console.log(main(files));
-/**
- * @param filePaths - array of files
- * @returns array of objects: { fileName: string, content: string, pvkey: string }
- */
-/**
- * [
- * 	{
- *     fileName: "./src/file1.ts",
- *     lineNumbers: [2, 6],
- *     keysFound: ["0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"]
- * 	}
- * ]
- */
+function extractLineFromKey(line) {
+    return line.replace(/^[\s*+-]+/, "").trim();
+}
+console.log(findKey(in_1.fileDataArray));

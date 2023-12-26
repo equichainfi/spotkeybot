@@ -1,0 +1,26 @@
+'+function sumMatrix(matrix: number[][]) {\n' +
+'+    var sum = 0;\n' +
+'+    for (var i = 0; i < matrix.length; i++) {\n' +
+'+        var currentRow = matrix[i];\n' +
+'+        for (var i = 0; i < currentRow.length; i++) {\n' +
+'+            sum += currentRow[i];\n' +
+'+        }\n' +
+'+    }\n' +
+'+    return sum;\n' +
+'+}\n' +
+'+\n' +
+'+function f(shouldInitialize: boolean) {\n' +
+'+  if (shouldInitialize) {\n' +
+'+    var x = 10;\n' +
+'+  }\n' +
+'+  return x;\n' +
+'+}\n' +
+'+// 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef\n' +
+"+f(true); // returns '10'\n" +
+"+f(false); // returns 'undefined'\n" +
+'+\n' +
+'+for (var i = 0; i < 10; i++) {\n' +
+'+  setTimeout(function () {\n' +
+'+    console.log(i);\n' +
+'+  }, 100 * i);\n' +
+'+}'

@@ -1,0 +1,5 @@
+PuTTY SSH RSA Key
+^PuTTY-User-Key-File-2: ssh-rsa\s*Encryption: none(?:.|\s?)*?Private-MAC:$
+
+PuTTY SSH DSA Key
+^PuTTY-User-Key-File-2: ssh-dss\s*Encryption: none(?:.|\s?)*?Private-MAC:$

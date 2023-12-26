@@ -1,7 +1,7 @@
 {
     "name": "eqcbot",
     "version": "1.0.0",
-    "private": true,
+    "private": false,
     "description": "Equichain Private Key Bot",
     "author": "Olivier Kobialka",
     "license": "ISC",
@@ -15,15 +15,36 @@
         "build": "tsc",
         "start": "probot run ./lib/index.js",
         "test": "jest",
-        "fmt": "npx prettier --write ."
+        "fmt": "npx prettier --write . && npm run eslint -- --fix",
+        "dev": "npm run build && npm run start",
+        "eslint": "eslint --ext .ts ."
+    },
+    "commitlint": {
+        "rules": {
+            "references-empty": [
+                2,
+                "never"
+            ]
+        },
+        "parserPreset": {
+            "parserOpts": {
+                "issuePrefixes": [
+                    "EQC-"
+                ]
+            }
+        }
     },
     "dependencies": {
         "probot": "^12.2.4"
     },
     "devDependencies": {
-        "@types/jest": "^29.0.0",
+        "@types/jest": "^29.5.11",
+        "@types/mocha": "^10.0.6",
         "@types/node": "^18.0.0",
+        "@typescript-eslint/eslint-plugin": "^6.15.0",
+        "@typescript-eslint/parser": "^6.15.0",
         "dotenv": "^16.3.1",
+        "eslint": "^8.56.0",
         "jest": "^29.0.0",
         "nock": "^13.0.5",
         "prettier": "^3.1.1",

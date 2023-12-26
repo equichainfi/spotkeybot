@@ -90,8 +90,7 @@ def spot(line: str) -> str | None:
 
 if __name__ == "__main__":
     file_paths: list[str] = [
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file1.txt",
-        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file2.ts",
+        "C:/Users/olivi/OneDrive/Pulpit/pkbot/l_impl/tests/file.txt",
     ]
 
     print(main(files=file_paths))

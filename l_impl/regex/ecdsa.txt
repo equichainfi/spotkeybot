@@ -1,0 +1,1 @@
+^-----BEGIN ECDSA PRIVATE KEY-----\s.*,ENCRYPTED(?:.|\s)+?-----END ECDSA PRIVATE KEY-----$

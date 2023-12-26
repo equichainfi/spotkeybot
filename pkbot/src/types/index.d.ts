@@ -1,12 +1,18 @@
 export { FindKeyResult, IFiles, MainImplResponse };
 
 declare module "probot" {
+    type Response = MainImplResponse[] | string;
+
+    interface AddLabelResponse {
+        name: string;
+        color: string;
+    }
+
     interface FindKeyResult {
         fileName: string;
         lineContent: string;
         lineNumbers: number[];
         keysFound: string[];
-        addressesFound: string[];
         numberOfKeysFound: number;
     }
 
@@ -19,6 +25,7 @@ declare module "probot" {
         fileName: string;
         lineNumbers: number[];
         keysFound: string[];
+        // linksToLines: string[];
     }
 
     interface IFileObject {
@@ -26,5 +33,11 @@ declare module "probot" {
         additions: number;
         deletions: number;
         fileData: string | undefined;
+    }
+
+    interface IFormatInput {
+        found: boolean;
+        sender: string;
+        res: MainImplResponse[];
     }
 }
