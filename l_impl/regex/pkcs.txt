@@ -1,2 +1,0 @@
-PKCS7 Encrypted Data
-^(?:Signer|Recipient)Info(?:s)?\ ::=\ \w+|[D|d]igest(?:Encryption)?Algorithm|EncryptedKey\ ::= \w+$
