@@ -39,18 +39,13 @@ export = (app: Probot): void => {
             });
         }
         const res: MainImplResponse[] = findKey(filesDataArray);
-        console.log("res" + res.forEach((r) => console.log(r.keysFound)));
+        console.log(filesDataArray);
+        console.log(res);
 
-        // const privateKeysResult: MainImplResponse[] | string = findKey(
-        //     filesDataArray.map((file) => ({
-        //         fileName: file.fileName,
-        //         fileContent: file.fileContent,
-        //     })),
-        // );
         sender = context.payload.sender.login;
         found = foundPrivateKey(res);
         msg = context.issue({
-            body: `${format({ filesArray, found, sender, res })}`,
+            body: `${format({ found, sender, res })}`,
         });
         // label = addLabel(hasPrivateKey);
 

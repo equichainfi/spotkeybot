@@ -25,6 +25,7 @@ declare module "probot" {
         fileName: string;
         lineNumbers: number[];
         keysFound: string[];
+        // linksToLines: string[];
     }
 
     interface IFileObject {
@@ -35,7 +36,6 @@ declare module "probot" {
     }
 
     interface IFormatInput {
-        filesArray: IFileObject[];
         found: boolean;
         sender: string;
         res: MainImplResponse[];

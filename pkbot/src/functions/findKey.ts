@@ -1,14 +1,28 @@
-import { FindKeyResult, IFiles, MainImplResponse } from "probot";
-import {
-    BTC_PV_KEY_REGEX,
-    ETH_ADDRESS_REGEX,
-    ETH_PV_KEY_REGEX,
-    PGP_KEY_REGEX,
-} from "./regex";
+interface FindKeyResult {
+    fileName: string;
+    lineContent: string;
+    lineNumbers: number[];
+    keysFound: string[];
+    numberOfKeysFound: number;
+}
+
+interface IFiles {
+    fileName: string;
+    fileContent: string;
+}
+
+interface MainImplResponse {
+    fileName: string;
+    lineNumbers: number[];
+    keysFound: string[];
+}
+
+const ETH_PV_KEY_REGEX: RegExp = /(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)/;
+const ETH_ADDRESS_REGEX: RegExp = /(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)/;
+const BTC_PV_KEY_REGEX: RegExp = / ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
 
 const PV_KEY_FOUND: string = "[+] Private Key found";
 const ADDRESS_FOUND: string = "[+] Address found";
-const PGP_KEY_FOUND: string = "[+] PGP Key found";
 
 export default function findKey(files: IFiles[]): MainImplResponse[] {
     return processFile(files);
@@ -38,12 +52,11 @@ function processFile(files: IFiles[]): MainImplResponse[] {
             if (
                 spotResult &&
                 (spotResult.startsWith(PV_KEY_FOUND) ||
-                    spotResult.startsWith(ADDRESS_FOUND) ||
-                    spotResult.startsWith(PGP_KEY_FOUND))
+                    spotResult.startsWith(ADDRESS_FOUND))
             ) {
                 const privateKey: string = spotResult.split(": ")[1];
 
-                caughtLineNumbers.push(lineNumber);
+                caughtLineNumbers.push(lineNumber + 1);
                 caughtKeys.push(privateKey);
             } else lineContent.push(line);
         }
@@ -66,8 +79,6 @@ function spotPrivateKey(line: string, lineNumber: number): string {
         return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
     else if (ETH_ADDRESS_REGEX.test(line))
         return `${ADDRESS_FOUND} in line ${lineNumber + 1}: ${line}`;
-    else if (PGP_KEY_REGEX.test(line))
-        return `${PGP_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
     else if (BTC_PV_KEY_REGEX.test(line))
         return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
     else return `Found nothing in line ${lineNumber + 1}`;
@@ -75,7 +86,6 @@ function spotPrivateKey(line: string, lineNumber: number): string {
 
 function formatResult(result: FindKeyResult[]): MainImplResponse[] {
     let formattedResult: MainImplResponse[] = [];
-    // let found: boolean = false;
 
     for (const fileData of result) {
         const lineNumbers: number[] = [...new Set(fileData.lineNumbers)];
@@ -88,7 +98,6 @@ function formatResult(result: FindKeyResult[]): MainImplResponse[] {
 
     for (const file of formattedResult) {
         if (file.keysFound.length > 0 || file.lineNumbers.length > 0) {
-            // found = true;
             break;
         }
     }
