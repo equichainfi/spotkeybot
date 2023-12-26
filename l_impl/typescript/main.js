@@ -9,6 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var in_1 = require("./in");
 var ETH_PV_KEY_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)/;
 var ETH_ADDRESS_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)/;
 var BTC_PV_KEY_REGEX = / ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
@@ -95,3 +96,4 @@ function formatResult(result) {
 function extractLineFromKey(line) {
     return line.replace(/^[\s*+-]+/, "").trim();
 }
+console.log(findKey(in_1.fileDataArray));

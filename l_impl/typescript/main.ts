@@ -126,3 +126,4 @@ function extractLineFromKey(line: string): string {
 	return line.replace(/^[\s*+-]+/, "").trim();
 }
 
+console.log(findKey(fileDataArray));
