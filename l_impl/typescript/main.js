@@ -9,11 +9,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var in_1 = require("./in");
-var ETH_PV_KEY_REGEX = /^(0x)?[0-9a-fA-F]{64}$/;
-var ETH_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
+var ETH_PV_KEY_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)/;
+var ETH_ADDRESS_REGEX = /(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)/;
+var BTC_PV_KEY_REGEX = / ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
 var PGP_KEY_REGEX = /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
-var CLEAN_LINE_REGEX = /^\s*\+/;
 var PV_KEY_FOUND = "[+] Private Key found";
 var ADDRESS_FOUND = "[+] Address found";
 var PGP_KEY_FOUND = "[+] PGP Key found";
@@ -54,25 +53,21 @@ function processFile(files) {
             fileName: fileName,
             lineContent: lineContent.join("\n"),
             lineNumbers: caughtLineNumbers || [],
-            keysFound: caughtKeys || [],
+            keysFound: extractLineFromKey(caughtKeys.join("\n")).split("\n") || [],
             numberOfKeysFound: caughtKeys.length || 0,
         });
     }
     return formatResult(result);
 }
-function cleanLine(line) {
-    var CLEAN_LINE_REGEX = /^\s*[\+\-]/;
-    var newLine = line.replace(CLEAN_LINE_REGEX, "");
-    newLine = newLine.replace(/[^a-fA-F0-9\-]+/g, "");
-    return newLine;
-}
 function spotPrivateKey(line, lineNumber) {
-    if (ETH_PV_KEY_REGEX.test(cleanLine(line)))
+    if (ETH_PV_KEY_REGEX.test(line))
         return "".concat(PV_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
-    else if (ETH_ADDRESS_REGEX.test(cleanLine(line)))
+    else if (ETH_ADDRESS_REGEX.test(line))
         return "".concat(ADDRESS_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
-    else if (PGP_KEY_REGEX.test(cleanLine(line)))
+    else if (PGP_KEY_REGEX.test(line))
         return "".concat(PGP_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
+    else if (BTC_PV_KEY_REGEX.test(line))
+        return "".concat(PV_KEY_FOUND, " in line ").concat(lineNumber + 1, ": ").concat(line);
     else
         return "Found nothing in line ".concat(lineNumber + 1);
 }
@@ -97,4 +92,6 @@ function formatResult(result) {
     }
     return found ? formattedResult : NOT_FOUND_MSG;
 }
-console.log(findKey(in_1.fileDataArray));
+function extractLineFromKey(line) {
+    return line.replace(/^[\s*+-]+/, "").trim();
+}

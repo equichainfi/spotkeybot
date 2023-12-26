@@ -1,21 +1,20 @@
-import { FindKeyResult, IFiles, MainImplResponse, Response } from "probot";
+import { FindKeyResult, IFiles, MainImplResponse } from "probot";
 import {
-    ADDRESS_FOUND,
-    NOT_FOUND_MSG,
-    PGP_KEY_FOUND,
-    PV_KEY_FOUND,
-} from "./utils";
-import { ETH_ADDRESS_REGEX, ETH_PV_KEY_REGEX, PGP_KEY_REGEX } from "./regex";
+    BTC_PV_KEY_REGEX,
+    ETH_ADDRESS_REGEX,
+    ETH_PV_KEY_REGEX,
+    PGP_KEY_REGEX,
+} from "./regex";
 
-export default function findKey(files: IFiles[]): Response {
-    const result: Response = processFile(files);
+const PV_KEY_FOUND: string = "[+] Private Key found";
+const ADDRESS_FOUND: string = "[+] Address found";
+const PGP_KEY_FOUND: string = "[+] PGP Key found";
 
-    if (result === NOT_FOUND_MSG) return NOT_FOUND_MSG as string;
-
-    return result;
+export default function findKey(files: IFiles[]): MainImplResponse[] {
+    return processFile(files);
 }
 
-function processFile(files: IFiles[]): Response {
+function processFile(files: IFiles[]): MainImplResponse[] {
     let result: FindKeyResult[] = [];
 
     for (const file of files) {
@@ -53,7 +52,8 @@ function processFile(files: IFiles[]): Response {
             fileName: fileName,
             lineContent: lineContent.join("\n"),
             lineNumbers: caughtLineNumbers || [],
-            keysFound: caughtKeys || [],
+            keysFound:
+                extractLineFromKey(caughtKeys.join("\n")).split("\n") || [],
             numberOfKeysFound: caughtKeys.length || 0,
         });
     }
@@ -68,16 +68,17 @@ function spotPrivateKey(line: string, lineNumber: number): string {
         return `${ADDRESS_FOUND} in line ${lineNumber + 1}: ${line}`;
     else if (PGP_KEY_REGEX.test(line))
         return `${PGP_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
+    else if (BTC_PV_KEY_REGEX.test(line))
+        return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
     else return `Found nothing in line ${lineNumber + 1}`;
 }
 
-function formatResult(result: FindKeyResult[]): Response {
+function formatResult(result: FindKeyResult[]): MainImplResponse[] {
     let formattedResult: MainImplResponse[] = [];
-    let found: boolean = false;
+    // let found: boolean = false;
 
     for (const fileData of result) {
         const lineNumbers: number[] = [...new Set(fileData.lineNumbers)];
-
         formattedResult.push({
             fileName: fileData.fileName,
             lineNumbers: lineNumbers,
@@ -87,10 +88,14 @@ function formatResult(result: FindKeyResult[]): Response {
 
     for (const file of formattedResult) {
         if (file.keysFound.length > 0 || file.lineNumbers.length > 0) {
-            found = true;
+            // found = true;
             break;
         }
     }
 
-    return found ? formattedResult : NOT_FOUND_MSG;
+    return formattedResult;
+}
+
+function extractLineFromKey(line: string): string {
+    return line.replace(/^[\s*+-]+/, "").trim();
 }

@@ -38,5 +38,6 @@ declare module "probot" {
         filesArray: IFileObject[];
         found: boolean;
         sender: string;
+        res: MainImplResponse[];
     }
 }

@@ -21,11 +21,11 @@ interface MainImplResponse {
 
 type Response = MainImplResponse[] | string;
 
-const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
-const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
+const ETH_PV_KEY_REGEX: RegExp = /(^|\b)(0x)?[0-9a-fA-F]{64}(\b|$)/;
+const ETH_ADDRESS_REGEX: RegExp = /(^|\b)(0x)?[0-9a-fA-F]{40}(\b|$)/;
+const BTC_PV_KEY_REGEX: RegExp = / ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
 const PGP_KEY_REGEX: RegExp =
 	/^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*?([a-zA-Z0-9\/\n\+\/:.=]+).*?(-----END PGP PRIVATE KEY BLOCK-----)$/;
-const CLEAN_LINE_REGEX: RegExp = /^\s*\+/;
 
 const PV_KEY_FOUND: string = "[+] Private Key found";
 const ADDRESS_FOUND: string = "[+] Address found";
@@ -33,14 +33,14 @@ const PGP_KEY_FOUND: string = "[+] PGP Key found";
 const NOT_FOUND_MSG: string = "[-] No Private Keys found!";
 
 export default function findKey(files: IFiles[]): Response {
-	const result: Response = processFile(files);
+	const result: Response = processFile(files) as Response;
 
 	if (result === NOT_FOUND_MSG) return NOT_FOUND_MSG as string;
 
 	return result;
 }
 
-function processFile(files: IFiles[]): Response {
+function processFile(files: IFiles[]): Response | undefined {
 	let result: FindKeyResult[] = [];
 
 	for (const file of files) {
@@ -78,7 +78,8 @@ function processFile(files: IFiles[]): Response {
 			fileName: fileName,
 			lineContent: lineContent.join("\n"),
 			lineNumbers: caughtLineNumbers || [],
-			keysFound: caughtKeys || [],
+			keysFound:
+				extractLineFromKey(caughtKeys.join("\n")).split("\n") || [],
 			numberOfKeysFound: caughtKeys.length || 0,
 		});
 	}
@@ -86,22 +87,15 @@ function processFile(files: IFiles[]): Response {
 	return formatResult(result);
 }
 
-function cleanLine(line: string): string {
-	const CLEAN_LINE_REGEX = /^\s*[\+\-]/;
-
-	let newLine: string = line.replace(CLEAN_LINE_REGEX, "");
-	newLine = newLine.replace(/[^a-fA-F0-9\-]+/g, "");
-
-	return newLine;
-}
-
 function spotPrivateKey(line: string, lineNumber: number): string {
-	if (ETH_PV_KEY_REGEX.test(cleanLine(line)))
+	if (ETH_PV_KEY_REGEX.test(line))
 		return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
-	else if (ETH_ADDRESS_REGEX.test(cleanLine(line)))
+	else if (ETH_ADDRESS_REGEX.test(line))
 		return `${ADDRESS_FOUND} in line ${lineNumber + 1}: ${line}`;
-	else if (PGP_KEY_REGEX.test(cleanLine(line)))
+	else if (PGP_KEY_REGEX.test(line))
 		return `${PGP_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
+	else if (BTC_PV_KEY_REGEX.test(line))
+		return `${PV_KEY_FOUND} in line ${lineNumber + 1}: ${line}`;
 	else return `Found nothing in line ${lineNumber + 1}`;
 }
 
@@ -128,4 +122,7 @@ function formatResult(result: FindKeyResult[]): Response {
 	return found ? formattedResult : NOT_FOUND_MSG;
 }
 
-console.log(findKey(fileDataArray));
+function extractLineFromKey(line: string): string {
+	return line.replace(/^[\s*+-]+/, "").trim();
+}
+

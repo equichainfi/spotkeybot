@@ -1,5 +1,6 @@
 export const ETH_PV_KEY_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{64}$/;
 export const ETH_ADDRESS_REGEX: RegExp = /^(0x)?[0-9a-fA-F]{40}$/;
+export const BTC_PV_KEY_REGEX: RegExp = /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
 export const PGP_KEY_REGEX: RegExp =
     /^(-----BEGIN PGP PUBLIC KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PUBLIC KEY BLOCK-----)$|^(-----BEGIN PGP PRIVATE KEY BLOCK-----).*([a-zA-Z0-9//\n/.:+ =]+).*(-----END PGP PRIVATE KEY BLOCK-----)$/;
 export const ECSDSA_PV_KEY_REGEX: RegExp =

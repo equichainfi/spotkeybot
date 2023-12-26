@@ -4,7 +4,7 @@ exports.fileDataArray = void 0;
 exports.fileDataArray = [
     {
         fileName: "test/btc_test.txt",
-        fileContent: "+E9873D79C6D87DC0FB6A5778633389F4453213303DA61F20BD67FC233AA33262",
+        fileContent: "+E9873D79C6D87DC0FB6A5778633389F4453213303DA61F20BD67FC233AA33262\nHUJ",
     },
     {
         fileName: "test/main.ts",
@@ -38,8 +38,8 @@ exports.fileDataArray = [
     {
         fileName: "test/file2.txt",
         fileContent: "+0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef\n" +
-            "+10ac8b8edd8935b0999cfc9a45ed1f02f7ff798854e973794b64c4dc2a6fa451\n" +
+            "-10ac8b8edd8935b0999cfc9a45ed1f02f7ff798854e973794b64c4dc2a6fa451\n" +
             "+\n" +
-            "+TEST: 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            "+TEST 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
     },
 ];
