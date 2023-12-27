@@ -19,7 +19,3 @@ export const EVENTS: any[] = [
     "pull_request.edited",
     "pull_request.synchronize",
 ];
-
-// APP
-export const WELCOME_MESSAGE: string =
-    "============================= pkbotapp loaded =============================\n";
