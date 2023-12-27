@@ -5,7 +5,6 @@ declare module "probot" {
 
     interface AddLabelResponse {
         name: string;
-        color: string;
     }
 
     interface FindKeyResult {
@@ -40,5 +39,8 @@ declare module "probot" {
         sender: string;
         res: MainImplResponse[];
         fileBlobs: string[];
+    }
+    interface IActionMap {
+        [key: string]: { add?: string[]; remove?: string[] };
     }
 }

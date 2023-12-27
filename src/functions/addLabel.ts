@@ -1,14 +1,5 @@
-/* eslint-disable indent */
-import { AddLabelResponse } from "probot";
+import { FOUND_LABEL_MESSAGE, NOT_FOUND_LABEL_MESSAGE } from "./utils";
 
-export default function addLabel(found: boolean): AddLabelResponse {
-    return found
-        ? {
-              name: process.env.FOUND_LABEL_MESSAGE!,
-              color: process.env.FOUND_LABEL_COLOR!,
-          }
-        : {
-              name: process.env.NOT_FOUND_LABEL!,
-              color: process.env.NOT_FOUND_LABEL_COLOR!,
-          };
+export default function addLabel(found: boolean): string {
+    return found ? FOUND_LABEL_MESSAGE : NOT_FOUND_LABEL_MESSAGE;
 }
