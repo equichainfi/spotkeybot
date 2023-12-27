@@ -15,7 +15,7 @@
         "build": "tsc",
         "start": "probot run ./lib/index.js",
         "test": "jest",
-        "fmt": "npx prettier --write . && npm run eslint -- --fix",
+        "fmt": "npm run build && npx prettier --write . && npm run eslint -- --fix",
         "dev": "npm run build && npm run start",
         "eslint": "eslint --ext .ts ."
     },

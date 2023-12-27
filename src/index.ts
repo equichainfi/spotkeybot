@@ -1,8 +1,14 @@
 import dotenv from "dotenv";
 import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
-import { findKey, format } from "./functions";
-import foundPrivateKey from "./functions/hasKey";
 import { EVENTS } from "./functions/utils";
+import {
+    addLabel,
+    findKey,
+    format,
+    foundPrivateKey,
+    relabel,
+} from "./functions";
+
 dotenv.config();
 
 export = (app: Probot): void => {
@@ -41,19 +47,24 @@ export = (app: Probot): void => {
         const fileBlobs: string[] = pushedFilesData.data.map(
             (file) => file.blob_url,
         );
+
         sender = context.payload.sender.login;
         found = foundPrivateKey(res);
+        let label: string = addLabel(found);
         msg = context.issue({
             body: `${format({ found, sender, res, fileBlobs })}`,
         });
-        // label = addLabel(hasPrivateKey);
-
-        // await context.octokit.issues.addLabels({
-        //     owner: context.payload.repository.owner.login,
-        //     repo: context.payload.repository.name,
-        //     issue_number: context.payload.pull_request.number,
-        //     labels: [label],
-        // });
+        await relabel(context, found);
+        await context.octokit.issues
+            .addLabels({
+                owner: context.payload.repository.owner.login,
+                repo: context.payload.repository.name,
+                issue_number: context.payload.pull_request.number,
+                labels: [label],
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 
         await context.octokit.issues.createComment(msg);
     });
