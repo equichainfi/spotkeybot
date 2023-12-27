@@ -1,13 +1,11 @@
 import dotenv from "dotenv";
 import { IFileObject, IFiles, MainImplResponse, Probot } from "probot";
 import { findKey, format } from "./functions";
-import { EVENTS, WELCOME_MESSAGE } from "./functions/utils";
 import foundPrivateKey from "./functions/hasKey";
+import { EVENTS } from "./functions/utils";
 dotenv.config();
 
 export = (app: Probot): void => {
-    app.log.info(WELCOME_MESSAGE);
-
     app.on(EVENTS, async (context) => {
         const filesArray: IFileObject[] = [];
         const filesDataArray: IFiles[] = [];
@@ -39,13 +37,14 @@ export = (app: Probot): void => {
             });
         }
         const res: MainImplResponse[] = findKey(filesDataArray);
-        console.log(filesDataArray);
-        console.log(res);
 
+        const fileBlobs: string[] = pushedFilesData.data.map(
+            (file) => file.blob_url,
+        );
         sender = context.payload.sender.login;
         found = foundPrivateKey(res);
         msg = context.issue({
-            body: `${format({ found, sender, res })}`,
+            body: `${format({ found, sender, res, fileBlobs })}`,
         });
         // label = addLabel(hasPrivateKey);
 
