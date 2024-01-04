@@ -107,8 +107,8 @@ default_permissions:
     # organization_administration: read
 
 name: pkbot
-# The homepage of your GitHub App.
-# url: https://example.com/
+
+url: https://spotkeybot-eda057ce5cb4.herokuapp.com/
 
 description: ✨ PRIVATE KEY BOT ✨ This bot scanns every pushed file on PR to check if any file contain any private key
 
