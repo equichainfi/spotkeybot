@@ -39,6 +39,8 @@ declare module "probot" {
         sender: string;
         res: MainImplResponse[];
         fileBlobs: string[];
+        repoName: string;
+        orgName: string;
     }
     interface IActionMap {
         [key: string]: { add?: string[]; remove?: string[] };
