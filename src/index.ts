@@ -52,7 +52,14 @@ export = (app: Probot): void => {
         found = foundPrivateKey(res);
         let label: string = addLabel(found);
         msg = context.issue({
-            body: `${format({ found, sender, res, fileBlobs })}`,
+            body: `${format({
+                found,
+                sender,
+                res,
+                fileBlobs,
+                repoName: context.payload.repository.name,
+                orgName: context.payload.repository.owner.login,
+            })}`,
         });
         await relabel(context, found);
         await context.octokit.issues
